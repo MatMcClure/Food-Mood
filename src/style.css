@@ -1,0 +1,85 @@
+/* style.css */
+
+.questionnaire-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f2f5;
+}
+
+.question-box {
+  background-color: #ffffff;
+  border: 5px solid #5900ff;
+  padding: 3rem; /* Increased padding */
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px; /* Increased width */
+  text-align: center;
+}
+
+.question-text {
+  font-size: 2rem; /* Was 1.5rem */
+  margin-bottom: 2rem; /* More spacing */
+  color: #333;
+}
+
+.option-button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 1rem;
+  background-color: #00ff15;
+  color: #fff;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.5s ease;
+  /* Smooth transition for both color and scale */
+}
+
+.option-button:hover {
+  background-color: #1eff00;
+  transform: scale(1.05); /* Slightly enlarge */
+}
+
+.Logo {
+  width: 700px;
+  position: absolute;
+  margin-left: 31%;
+}
+
+@media (orientation: portrait), (max-width: 768px) {
+  .questionnaire-container {
+    padding: 1rem;
+    height: auto;
+    align-items: flex-start;
+  }
+
+  .question-box {
+    max-width: 90%;
+    padding: 1.5rem;
+    border-width: 3px;
+  }
+
+  .question-text {
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .option-button {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
+
+  .Logo {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    position: static;
+    margin-bottom: 1rem;
+  }
+}
