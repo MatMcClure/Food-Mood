@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import '../style.css';
 
 export default function Result({ answers }) {
   const [loading, setLoading] = useState(true);
@@ -7,7 +8,6 @@ export default function Result({ answers }) {
   const [mealIdeas, setMealIdeas] = useState([]);
   const [images, setImages] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
-  console.log('OpenAI Key:', process.env.REACT_APP_OPENAI_KEY);
 
   useEffect(() => {
     const combinedPrompt = `
@@ -22,10 +22,8 @@ export default function Result({ answers }) {
 
     async function fetchData() {
       try {
-        // Introduce a delay to reduce rate-limiting
         await new Promise((res) => setTimeout(res, 1000));
 
-        // 1. OpenAI Meal Ideas
         const openaiRes = await axios.post(
           'https://api.openai.com/v1/chat/completions',
           {
@@ -46,11 +44,10 @@ export default function Result({ answers }) {
           .map((line) => line.replace(/^\d+\.\s*/, ''));
         setMealIdeas(meals);
 
-        // 2. Pexels Images (first meal only)
         const pexelsRes = await axios.get(
           `https://api.pexels.com/v1/search?query=${encodeURIComponent(
             meals[0]
-          )}&per_page=3`,
+          )}&per_page=6`,
           {
             headers: {
               Authorization: process.env.REACT_APP_PEXELS_KEY,
@@ -59,7 +56,6 @@ export default function Result({ answers }) {
         );
         setImages(pexelsRes.data.photos);
 
-        // 3. Yelp Restaurants (first meal)
         const yelpRes = await axios.get(
           `https://api.yelp.com/v3/businesses/search`,
           {
@@ -76,9 +72,7 @@ export default function Result({ answers }) {
         setRestaurants(yelpRes.data.businesses);
       } catch (err) {
         console.error('Error fetching data:', err);
-        setError(
-          'Something went wrong while fetching your meal recommendations. Please try again in a moment.'
-        );
+        setError('Something went wrong while fetching your meal recommendations. Please try again in a moment.');
       } finally {
         setLoading(false);
       }
@@ -88,42 +82,44 @@ export default function Result({ answers }) {
   }, [answers]);
 
   if (loading) {
-    return <div className="p-6">Loading your meal suggestions...</div>;
+    return <div className="result-loading">Loading your meal suggestions...</div>;
   }
 
   if (error) {
-    return <div className="p-6 text-red-600 font-semibold">{error}</div>;
+    return <div className="result-error">{error}</div>;
   }
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl mb-4">Meal Ideas</h2>
-      <ul className="mb-6">
-        {mealIdeas.map((meal, idx) => (
-          <li key={idx}>🍽️ {meal}</li>
-        ))}
-      </ul>
+    <div className="result-container">
+      <div className="result-box">
+        <h2 className="section-title">Meal Ideas</h2>
+        <ul className="meal-list">
+          {mealIdeas.map((meal, idx) => (
+            <li key={idx}>🍽️ {meal}</li>
+          ))}
+        </ul>
 
-      <h2 className="text-2xl mb-4">Images from Pexels</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        {images.map((img) => (
-          <img
-            key={img.id}
-            src={img.src.medium}
-            alt={img.alt}
-            className="rounded shadow"
-          />
-        ))}
+        <h2 className="section-title">Images from Pexels</h2>
+        <div className="image-grid">
+          {images.map((img) => (
+            <img
+              key={img.id}
+              src={img.src.medium}
+              alt={img.alt}
+              className="meal-image"
+            />
+          ))}
+        </div>
+
+        <h2 className="section-title">Nearby Restaurants</h2>
+        <ul className="restaurant-list">
+          {restaurants.map((res) => (
+            <li key={res.id} className="restaurant-item">
+              <strong>{res.name}</strong> – {res.location.address1} – ⭐ {res.rating}
+            </li>
+          ))}
+        </ul>
       </div>
-
-      <h2 className="text-2xl mb-4">Nearby Restaurants</h2>
-      <ul>
-        {restaurants.map((res) => (
-          <li key={res.id} className="mb-3">
-            <strong>{res.name}</strong> – {res.location.address1} – ⭐ {res.rating}
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
