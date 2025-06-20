@@ -46,6 +46,7 @@ export default function Questionnaire() {
     <div className="questionnaire-container">
       <div className="question-box">
         <h2 className="question-text">{current.question}</h2>
+        <div className="options-grid">
         {current.options.map((opt) => (
           <button
             key={opt}
@@ -55,6 +56,7 @@ export default function Questionnaire() {
             {opt}
           </button>
         ))}
+        </div>
       </div>
     </div>
   );
