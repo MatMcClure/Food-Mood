@@ -60,7 +60,7 @@ export default function Result({ answers, location }) {
           `https://api.yelp.com/v3/businesses/search`,
           {
             headers: {
-              Authorization: `Bearer ${process.env.REACT_APP_FORESQUARE_KEY}`,
+              Authorization: `Bearer ${process.env.REACT_APP_YELP_KEY}`,
             },
             params: {
               term: meals[0],
