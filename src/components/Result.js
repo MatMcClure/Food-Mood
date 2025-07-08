@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../style.css';
 
-export default function Result({ answers }) {
+export default function Result({ answers, location }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [mealIdeas, setMealIdeas] = useState([]);
@@ -11,18 +11,18 @@ export default function Result({ answers }) {
 
   useEffect(() => {
     const combinedPrompt = `
-    You are a food assistant. Based on the following preferences:
-    Mood: ${answers[0]}, Time of day: ${answers[1]}, Diet: ${answers[2]},
-    suggest 3 meals a person might enjoy.
-    Return only a simple list like:
-      1. Chicken Burrito
-      2. Avocado Toast
-      3. Pad Thai
+      You are a food assistant. Based on the following preferences:
+      Mood: ${answers[0]}, Time of day: ${answers[1]}, Diet: ${answers[2]},
+      suggest 3 meals a person might enjoy.
+      Return only a simple list like:
+        1. Chicken Burrito
+        2. Avocado Toast
+        3. Pad Thai
     `;
 
     async function fetchData() {
       try {
-        await new Promise((res) => setTimeout(res, 1000));
+        await new Promise((res) => setTimeout(res, 1000)); // delay to reduce rate limiting
 
         const openaiRes = await axios.post(
           'https://api.openai.com/v1/chat/completions',
@@ -60,11 +60,11 @@ export default function Result({ answers }) {
           `https://api.yelp.com/v3/businesses/search`,
           {
             headers: {
-              Authorization: `Bearer ${process.env.REACT_APP_YELP_KEY}`,
+              Authorization: `Bearer ${process.env.REACT_APP_FORESQUARE_KEY}`,
             },
             params: {
               term: meals[0],
-              location: 'New York',
+              location: location || 'New York',
               limit: 5,
             },
           }
@@ -79,7 +79,7 @@ export default function Result({ answers }) {
     }
 
     fetchData();
-  }, [answers]);
+  }, [answers, location]);
 
   if (loading) {
     return <div className="result-loading">Loading your meal suggestions...</div>;
